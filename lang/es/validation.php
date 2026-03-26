@@ -1,0 +1,51 @@
+<?php
+
+return [
+    'accepted' => 'El campo :attribute debe ser aceptado.',
+    'boolean' => 'El campo :attribute debe ser verdadero o falso.',
+    'confirmed' => 'La confirmacion de :attribute no coincide.',
+    'email' => 'El campo :attribute debe ser un correo valido.',
+    'image' => 'El campo :attribute debe ser una imagen.',
+    'in' => 'El campo :attribute seleccionado no es valido.',
+    'integer' => 'El campo :attribute debe ser un numero entero.',
+    'max' => [
+        'numeric' => 'El campo :attribute no debe ser mayor que :max.',
+        'file' => 'El campo :attribute no debe ser mayor que :max kilobytes.',
+        'string' => 'El campo :attribute no debe ser mayor que :max caracteres.',
+        'array' => 'El campo :attribute no debe tener mas de :max elementos.',
+    ],
+    'min' => [
+        'numeric' => 'El campo :attribute debe ser al menos :min.',
+        'file' => 'El campo :attribute debe tener al menos :min kilobytes.',
+        'string' => 'El campo :attribute debe tener al menos :min caracteres.',
+        'array' => 'El campo :attribute debe tener al menos :min elementos.',
+    ],
+    'numeric' => 'El campo :attribute debe ser un numero.',
+    'required' => 'El campo :attribute es obligatorio.',
+    'string' => 'El campo :attribute debe ser una cadena de texto.',
+    'unique' => 'El campo :attribute ya ha sido registrado.',
+
+    'attributes' => [
+        'name' => 'nombre',
+        'email' => 'correo',
+        'password' => 'contrasena',
+        'password_confirmation' => 'confirmacion de contrasena',
+        'phone' => 'telefono',
+        'address' => 'direccion',
+        'city' => 'ciudad',
+        'state' => 'estado',
+        'postal_code' => 'codigo postal',
+        'role' => 'rol',
+        'status' => 'estatus',
+        'price' => 'precio',
+        'stock' => 'stock',
+        'description' => 'descripcion',
+        'image' => 'imagen',
+        'about_us' => 'quienes somos',
+        'mission' => 'mision',
+        'vision' => 'vision',
+        'location' => 'ubicacion',
+        'contact' => 'contacto',
+    ],
+];
+
