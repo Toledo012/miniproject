@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\PanelClienteController;
 use App\Http\Controllers\RedireccionPanelController;
 use App\Http\Controllers\PanelEmpleadoController;
 use App\Http\Controllers\GestionEmpleadosController;
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [PerfilController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware('role:cliente')->prefix('cliente')->name('client.')->group(function () {
+        Route::get('/dashboard', [PanelClienteController::class, 'index'])->name('dashboard');
         Route::get('/carrito', [CarritoController::class, 'index'])->name('cart');
         Route::post('/carrito/checkout', [CarritoController::class, 'checkout'])->name('cart.checkout');
         Route::post('/carrito/{product}', [CarritoController::class, 'store'])->name('cart.store');
@@ -42,8 +44,11 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:gerente')->prefix('gerente')->name('manager.')->group(function () {
         Route::get('/dashboard', [PanelGerenteController::class, 'index'])->name('dashboard');
         Route::get('/usuarios', [GestionEmpleadosController::class, 'index'])->name('users.index');
-        Route::get('/empleados/crear', [GestionEmpleadosController::class, 'create'])->name('users.create');
-        Route::post('/empleados', [GestionEmpleadosController::class, 'store'])->name('users.store');
+        Route::get('/usuarios/crear', [GestionEmpleadosController::class, 'create'])->name('users.create');
+        Route::post('/usuarios', [GestionEmpleadosController::class, 'store'])->name('users.store');
+        Route::get('/usuarios/{user}/editar', [GestionEmpleadosController::class, 'edit'])->name('users.edit');
+        Route::patch('/usuarios/{user}', [GestionEmpleadosController::class, 'update'])->name('users.update');
+        Route::delete('/usuarios/{user}', [GestionEmpleadosController::class, 'destroy'])->name('users.destroy');
         Route::get('/contenido', [ContenidoSitioController::class, 'edit'])->name('content.edit');
         Route::patch('/contenido', [ContenidoSitioController::class, 'update'])->name('content.update');
     });
@@ -60,6 +65,7 @@ Route::middleware('auth')->group(function () {
 */
 Route::middleware('auth')->group(function () {
     Route::middleware('role:cliente')->prefix('client')->group(function () {
+        Route::get('/dashboard', [PanelClienteController::class, 'index']);
         Route::get('/cart', [CarritoController::class, 'index']);
         Route::post('/cart/checkout', [CarritoController::class, 'checkout']);
         Route::post('/cart/{product}', [CarritoController::class, 'store']);
@@ -79,8 +85,11 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:gerente')->prefix('manager')->group(function () {
         Route::get('/dashboard', [PanelGerenteController::class, 'index']);
         Route::get('/users', [GestionEmpleadosController::class, 'index']);
-        Route::get('/employees/create', [GestionEmpleadosController::class, 'create']);
-        Route::post('/employees', [GestionEmpleadosController::class, 'store']);
+        Route::get('/users/create', [GestionEmpleadosController::class, 'create']);
+        Route::post('/users', [GestionEmpleadosController::class, 'store']);
+        Route::get('/users/{user}/edit', [GestionEmpleadosController::class, 'edit']);
+        Route::patch('/users/{user}', [GestionEmpleadosController::class, 'update']);
+        Route::delete('/users/{user}', [GestionEmpleadosController::class, 'destroy']);
         Route::get('/content', [ContenidoSitioController::class, 'edit']);
         Route::patch('/content', [ContenidoSitioController::class, 'update']);
     });
@@ -91,4 +100,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-

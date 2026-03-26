@@ -11,8 +11,17 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                raph: {
+                    black: '#0b0f0c',
+                    dark: '#232323',
+                    green: '#74ac42',
+                    'green-dark': '#5d884d',
+                    cream: '#f5f7f2',
+                },
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Arial Nova', ...defaultTheme.fontFamily.sans],
             },
         },
     },

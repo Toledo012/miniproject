@@ -4,31 +4,30 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="theme-color" content="#f5f7f2">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>RAPH</title>
+        <link rel="icon" type="image/svg+xml" href="{{ asset('raph-favicon.svg') }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="relative min-h-screen overflow-hidden">
+            <div class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-raph-green/10 via-white/0 to-transparent"></div>
+            <div class="pointer-events-none absolute left-[-6rem] top-24 h-72 w-72 rounded-full bg-raph-green/10 blur-3xl"></div>
+            <div class="pointer-events-none absolute right-[-8rem] top-12 h-96 w-96 rounded-full bg-raph-green-dark/10 blur-3xl"></div>
+
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="relative z-10 border-b border-white/60 bg-white/35 backdrop-blur-xl">
+                    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
-            <!-- Page Content -->
-            <main>
+            <main class="relative z-10">
                 {{ $slot }}
             </main>
         </div>

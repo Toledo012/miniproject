@@ -1,22 +1,32 @@
 <x-guest-layout>
-    <!-- Estado de sesion -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-auth-session-status class="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <div class="mb-8 text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">Acceso seguro</p>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Iniciar sesion</h2>
+        <p class="mt-3 text-sm leading-6 text-slate-500">Entra y continua justo donde lo dejaste.</p>
+    </div>
+
+    <form method="POST" action="{{ route('login') }}" class="space-y-5">
         @csrf
 
-        <!-- Correo -->
         <div>
-            <x-input-label for="email" value="Correo" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-input-label for="email" value="Correo" class="text-sm font-medium text-slate-700" />
+            <x-text-input id="email" class="mt-2 block w-full rounded-2xl border-white/80 bg-white/80 px-4 py-3 text-slate-900 shadow-sm focus:border-raph-green focus:ring-raph-green/30" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- Contrasena -->
-        <div class="mt-4">
-            <x-input-label for="password" value="Contrasena" />
+        <div>
+            <div class="flex items-center justify-between gap-3">
+                <x-input-label for="password" value="Contrasena" class="text-sm font-medium text-slate-700" />
+                @if (Route::has('password.request'))
+                    <a class="text-sm font-medium text-slate-500 transition hover:text-slate-900" href="{{ route('password.request') }}">
+                        ¿Olvidaste tu contrasena?
+                    </a>
+                @endif
+            </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
+            <x-text-input id="password" class="mt-2 block w-full rounded-2xl border-white/80 bg-white/80 px-4 py-3 text-slate-900 shadow-sm focus:border-raph-green focus:ring-raph-green/30"
                 type="password"
                 name="password"
                 required autocomplete="current-password" />
@@ -24,30 +34,18 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- Recordarme -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">Recordarme</span>
-            </label>
-        </div>
+        <label for="remember_me" class="flex items-center gap-3 text-sm text-slate-600">
+            <input id="remember_me" type="checkbox" class="rounded border-slate-300 text-raph-green focus:ring-raph-green/40" name="remember">
+            <span>Recordarme en este equipo</span>
+        </label>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    Olvidaste tu contrasena?
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                Iniciar sesion
-            </x-primary-button>
-        </div>
+        <button type="submit" class="raph-button-primary w-full !py-3.5">
+            Iniciar sesion
+        </button>
     </form>
 
-    <div class="mt-6 pt-4 border-t border-gray-200 text-sm text-gray-700">
-        <span>No estas registrado?</span>
-        <a href="{{ route('register') }}" class="ms-1 text-blue-600 hover:underline">Crear cuenta</a>
+    <div class="mt-8 border-t border-slate-200/70 pt-6 text-center text-sm text-slate-600">
+        <span>No tienes cuenta todavia?</span>
+        <a href="{{ route('register') }}" class="ml-1 font-semibold text-raph-green-dark transition hover:text-raph-green">Crear cuenta</a>
     </div>
 </x-guest-layout>
-

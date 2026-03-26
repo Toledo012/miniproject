@@ -3,155 +3,175 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tienda - Inicio</title>
+    <meta name="theme-color" content="#f5f7f2">
+    <title>RAPH</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('raph-favicon.svg') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100 text-gray-900">
-    @auth
-        @include('layouts.navigation')
-    @endauth
+<body class="font-sans text-slate-900 antialiased">
+    <div class="relative min-h-screen overflow-hidden">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_top_left,rgba(116,172,66,0.18),transparent_34%),radial-gradient(circle_at_top_right,rgba(93,136,77,0.14),transparent_30%)]"></div>
 
-    <div class="max-w-6xl mx-auto p-6 space-y-6">
-        @guest
-            <header class="bg-white p-6 rounded-lg shadow">
-                <div class="flex items-center justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl font-bold">Tienda E-commerce</h1>
-                        <p class="text-gray-600 mt-1">Catalogo publico y acceso por roles.</p>
-                    </div>
-                    <nav class="flex items-center gap-3">
-                        <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Iniciar sesion</a>
-                        <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Registrarse</a>
+        @auth
+            @include('layouts.navigation')
+        @else
+            <header class="relative z-20 border-b border-white/60 bg-white/55 backdrop-blur-2xl">
+                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+                    <a href="{{ route('home') }}" class="transition hover:opacity-90">
+                        <x-application-logo class="h-11 w-auto" />
+                    </a>
+                    <nav class="hidden items-center gap-3 sm:flex">
+                        <a href="{{ route('login') }}" class="raph-button-secondary">Iniciar sesion</a>
+                        <a href="{{ route('register') }}" class="raph-button-primary">Registrarse</a>
                     </nav>
                 </div>
             </header>
-        @endguest
+        @endauth
 
-        <section class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-2xl font-semibold text-center mb-6">Sobre Nosotros</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <article class="border rounded-md p-4">
-                    <h3 class="text-lg font-semibold mb-2">Quienes somos</h3>
-                    <p class="text-gray-700">{{ $siteContent['about_us'] }}</p>
-                </article>
-                <article class="border rounded-md p-4">
-                    <h3 class="text-lg font-semibold mb-2">Mision</h3>
-                    <p class="text-gray-700">{{ $siteContent['mission'] }}</p>
-                </article>
-                <article class="border rounded-md p-4">
-                    <h3 class="text-lg font-semibold mb-2">Vision</h3>
-                    <p class="text-gray-700">{{ $siteContent['vision'] }}</p>
-                </article>
-            </div>
-        </section>
+        <main class="relative z-10">
+            <section class="page-section pt-10 lg:pt-16">
+                <div class="mx-auto max-w-7xl">
+                    <div class="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+                        <div>
+                            <span class="raph-pill">RAPH</span>
+                            <h1 class="mt-6 max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
+                                Compra con fluidez, descubre productos y manten todo en orden en un mismo lugar.
+                            </h1>
+                            <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+                                Descubre novedades, revisa disponibilidad y compra con una experiencia clara de principio a fin.
+                            </p>
 
-        <section class="bg-white p-6 rounded-lg shadow">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-3xl font-semibold">¡Los Productos Mas Vendidos!</h2>
-                @auth
-                    @if (auth()->user()->isCliente())
-                        <a href="{{ route('client.products.index') }}" class="text-blue-600 hover:underline">Ver mas</a>
-                    @else
-                        <a href="{{ route('dashboard') }}" class="text-blue-600 hover:underline">Ver mas</a>
-                    @endif
-                @else
-                    <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Ver mas</a>
-                @endauth
-            </div>
-            @if ($products->isEmpty())
-                <p class="text-gray-600">No hay productos activos publicados.</p>
-            @else
-                <div class="relative">
-                    <div id="home-products-viewport" class="overflow-hidden">
-                        <div id="home-products-track" class="flex gap-4 pb-2 transition-transform duration-300">
-                            @foreach ($products as $product)
-                                <article class="home-product-card border rounded-md p-4 shrink-0" style="display: flex; flex-direction: column; min-height: 380px;">
-                                    <div style="height: 180px; background: #f3f4f6; border-radius: 6px; overflow: hidden; margin-bottom: 12px; display: flex; align-items: center; justify-content: center;">
-                                        @if ($product->image_url)
-                                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" style="width: 100%; height: 180px; object-fit: contain; object-position: center; display: block; background: #f3f4f6;">
-                                        @else
-                                            <div style="width: 100%; height: 180px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6b7280;">Sin imagen</div>
-                                        @endif
-                                    </div>
-                                    <h3 class="font-semibold" style="min-height: 48px;">{{ $product->name }}</h3>
-                                    <p class="mt-2 text-xl font-semibold text-sky-600">${{ number_format((float) $product->price, 2) }}</p>
-                                    <div class="mt-3 flex items-center justify-between gap-2" style="margin-top: auto;">
-                                        @auth
-                                            @if (auth()->user()->isCliente())
-                                                <a href="{{ route('client.products.show', $product) }}" class="text-sm text-blue-600 hover:underline">Ver</a>
-                                                <form method="POST" action="{{ route('client.cart.store', $product) }}">
-                                                    @csrf
-                                                    <button type="submit" class="bg-red-600 text-white text-sm px-3 py-2 rounded hover:bg-red-700">COMPRAR AHORA</button>
-                                                </form>
-                                            @else
-                                                <a href="{{ route('dashboard') }}" class="text-sm text-blue-600 hover:underline">Panel</a>
-                                            @endif
-                                        @else
-                                            <a href="{{ route('login') }}" class="text-sm text-blue-600 hover:underline">Ver</a>
-                                            <a href="{{ route('login') }}" class="bg-red-600 text-white text-sm px-3 py-2 rounded hover:bg-red-700">COMPRAR AHORA</a>
-                                        @endauth
-                                    </div>
+                            <div class="mt-10 flex flex-wrap gap-4">
+                                @guest
+                                    <a href="{{ route('register') }}" class="raph-button-primary">Crear cuenta</a>
+                                    <a href="{{ route('login') }}" class="raph-button-secondary">Entrar a RAPH</a>
+                                @else
+                                    <a href="{{ route('dashboard') }}" class="raph-button-primary">Ir a mi panel</a>
+                                    @if (auth()->user()->isCliente())
+                                        <a href="{{ route('client.products.index') }}" class="raph-button-secondary">Ver catalogo</a>
+                                    @endif
+                                @endguest
+                            </div>
+
+                            <div class="mt-12 grid gap-4 sm:grid-cols-3">
+                                <article class="glass-card p-5">
+                                    <p class="text-sm text-slate-500">Catalogo</p>
+                                    <p class="mt-2 text-base font-semibold text-slate-900">Explora productos, compara precios y encuentra lo que buscas rapido.</p>
                                 </article>
-                            @endforeach
+                                <article class="glass-card p-5">
+                                    <p class="text-sm text-slate-500">Compras</p>
+                                    <p class="mt-2 text-base font-semibold text-slate-900">Carrito, pedidos y seguimiento en una experiencia continua y sin friccion.</p>
+                                </article>
+                                <article class="glass-card p-5">
+                                    <p class="text-sm text-slate-500">Control</p>
+                                    <p class="mt-2 text-base font-semibold text-slate-900">Inventario, pedidos y contenido siempre a la mano cuando los necesitas.</p>
+                                </article>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-6 sm:p-8">
+                            <div class="rounded-[30px] bg-gradient-to-br from-slate-950 via-slate-800 to-raph-green-dark p-8 text-white">
+                                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">RAPH</p>
+                                <h2 class="mt-4 text-3xl font-semibold tracking-tight">Encuentra lo que necesitas y compra sin complicaciones.</h2>
+                                <div class="mt-8 space-y-4">
+                                    <div class="rounded-[24px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                                        <p class="text-sm font-semibold">Catalogo claro</p>
+                                        <p class="mt-1 text-sm text-white/75">Productos, precios y disponibilidad visibles desde el primer momento.</p>
+                                    </div>
+                                    <div class="rounded-[24px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                                        <p class="text-sm font-semibold">Compra continua</p>
+                                        <p class="mt-1 text-sm text-white/75">Carrito, pedidos y seguimiento listos para continuar sin perder tiempo.</p>
+                                    </div>
+                                    <div class="rounded-[24px] border border-white/10 bg-white/10 p-4 backdrop-blur">
+                                        <p class="text-sm font-semibold">Informacion a la mano</p>
+                                        <p class="mt-1 text-sm text-white/75">Ubicacion, contacto y datos esenciales siempre visibles cuando los buscas.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            @endif
-        </section>
+            </section>
 
-        <section class="bg-white p-6 rounded-lg shadow space-y-3">
-            <h2 class="text-xl font-semibold">Ubicacion</h2>
-            <p class="text-gray-700">{{ $siteContent['location'] }}</p>
-            <h2 class="text-xl font-semibold pt-2">Contactanos</h2>
-            <p class="text-gray-700">{{ $siteContent['contact'] }}</p>
-        </section>
+            <section class="page-section">
+                <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
+                    <div class="glass-card p-8">
+                        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">Quienes somos</p>
+                        <h2 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Una tienda digital pensada para crecer con orden.</h2>
+                        <p class="mt-4 text-base leading-8 text-slate-600">{{ $siteContent['about_us'] }}</p>
+                    </div>
+                    <div class="grid gap-6 sm:grid-cols-2">
+                        <article class="glass-card p-8">
+                            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">Mision</p>
+                            <p class="mt-4 text-base leading-8 text-slate-600">{{ $siteContent['mission'] }}</p>
+                        </article>
+                        <article class="glass-card p-8">
+                            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">Vision</p>
+                            <p class="mt-4 text-base leading-8 text-slate-600">{{ $siteContent['vision'] }}</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="page-section">
+                <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+                    <article class="glass-card p-8">
+                        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">Ubicacion</p>
+                        <p class="mt-4 text-base leading-8 text-slate-600">{{ $siteContent['location'] }}</p>
+                    </article>
+                    <article class="glass-card p-8">
+                        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">Contactanos</p>
+                        <p class="mt-4 text-base leading-8 text-slate-600">{{ $siteContent['contact'] }}</p>
+                    </article>
+                </div>
+            </section>
+
+            @auth
+                <section class="page-section pt-0">
+                    <div class="mx-auto max-w-7xl">
+                        <div class="glass-card p-8 sm:p-10">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">Recomendados</p>
+                                    <h2 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Productos activos en RAPH</h2>
+                                </div>
+                                @if (auth()->user()->isCliente())
+                                    <a href="{{ route('client.products.index') }}" class="text-sm font-medium text-raph-green-dark transition hover:text-raph-green">Ir al catalogo completo</a>
+                                @else
+                                    <a href="{{ route('dashboard') }}" class="text-sm font-medium text-raph-green-dark transition hover:text-raph-green">Ir a mi panel</a>
+                                @endif
+                            </div>
+
+                            <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                                @forelse ($products->take(4) as $product)
+                                    <article class="rounded-[28px] border border-white/80 bg-white/80 p-4 shadow-sm">
+                                        <div class="flex h-48 items-center justify-center overflow-hidden rounded-[22px] bg-slate-100">
+                                            @if ($product->image_url)
+                                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-contain">
+                                            @else
+                                                <span class="text-sm text-slate-400">Sin imagen</span>
+                                            @endif
+                                        </div>
+                                        <h3 class="mt-4 text-lg font-semibold text-slate-900">{{ $product->name }}</h3>
+                                        <p class="mt-2 text-sm text-slate-500">{{ \Illuminate\Support\Str::limit($product->description ?: 'Producto disponible actualmente en RAPH.', 82) }}</p>
+                                        <div class="mt-4 flex items-center justify-between gap-3">
+                                            <span class="text-base font-semibold text-slate-950">${{ number_format((float) $product->price, 2) }}</span>
+                                            @if (auth()->user()->isCliente())
+                                                <a href="{{ route('client.products.show', $product) }}" class="text-sm font-medium text-raph-green-dark transition hover:text-raph-green">Ver detalle</a>
+                                            @else
+                                                <a href="{{ route('dashboard') }}" class="text-sm font-medium text-raph-green-dark transition hover:text-raph-green">Panel</a>
+                                            @endif
+                                        </div>
+                                    </article>
+                                @empty
+                                    <p class="text-sm text-slate-500">Todavia no hay productos activos disponibles.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            @endauth
+        </main>
     </div>
 </body>
-<script>
-    (function () {
-        const viewport = document.getElementById('home-products-viewport');
-        const track = document.getElementById('home-products-track');
-        if (!viewport || !track) return;
-
-        const cards = Array.from(track.querySelectorAll('.home-product-card'));
-        if (cards.length === 0) return;
-
-        let index = 0;
-        let visible = 1;
-        const gap = 16;
-
-        function getVisibleCount() {
-            if (window.innerWidth >= 1280) return 5;
-            if (window.innerWidth >= 1024) return 4;
-            if (window.innerWidth >= 640) return 2;
-            return 1;
-        }
-
-        function maxIndex() {
-            return Math.max(0, cards.length - visible);
-        }
-
-        function layout() {
-            visible = getVisibleCount();
-            const viewportWidth = viewport.clientWidth;
-            const cardWidth = (viewportWidth - (gap * (visible - 1))) / visible;
-
-            cards.forEach((card) => {
-                card.style.width = cardWidth + 'px';
-            });
-
-            if (index > maxIndex()) index = maxIndex();
-            update();
-        }
-
-        function update() {
-            const cardWidth = cards[0].offsetWidth;
-            const offset = index * (cardWidth + gap);
-            track.style.transform = `translateX(-${offset}px)`;
-        }
-
-        window.addEventListener('resize', layout);
-        layout();
-    })();
-</script>
 </html>

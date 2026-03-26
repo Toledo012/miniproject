@@ -1,88 +1,64 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Panel de Empleado</h2>
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] text-raph-green">RAPH</p>
+                <h1 class="text-3xl font-semibold tracking-tight text-slate-950">Operaciones</h1>
+                <p class="max-w-2xl text-sm text-slate-600">Inventario, seguimiento y trabajo diario en una vista directa y ordenada.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <a href="{{ route('inventory.products.index') }}" class="raph-button-primary">Gestionar inventario</a>
+                <a href="{{ route('employee.purchase-requests.index') }}" class="raph-button-secondary">Revisar solicitudes</a>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-8" style="padding-top: 28px;">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" style="display: grid; gap: 16px;">
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Panel Operativo</h3>
-                <p style="color: #4b5563;">Gestion diaria de inventario y seguimiento de pedidos.</p>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px;">
-                    <a href="{{ route('inventory.products.index') }}" style="display: inline-block; background: #2563eb; color: #ffffff; padding: 10px 14px; border-radius: 6px; text-decoration: none; font-weight: 600;">Gestionar inventario</a>
-                    <a href="{{ route('inventory.products.create') }}" style="display: inline-block; background: #16a34a; color: #ffffff; padding: 10px 14px; border-radius: 6px; text-decoration: none; font-weight: 600;">Agregar producto</a>
-                    <a href="{{ route('employee.purchase-requests.index') }}" style="display: inline-block; background: #7c3aed; color: #ffffff; padding: 10px 14px; border-radius: 6px; text-decoration: none; font-weight: 600;">Revisar solicitudes</a>
-                </div>
-            </div>
+    <div class="page-section">
+        <div class="mx-auto max-w-7xl space-y-6">
+            <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <article class="glass-card p-6"><p class="text-sm text-slate-500">Productos totales</p><p class="mt-3 text-4xl font-semibold text-slate-950">{{ $totalProducts }}</p></article>
+                <article class="glass-card p-6"><p class="text-sm text-slate-500">Productos activos</p><p class="mt-3 text-4xl font-semibold text-slate-950">{{ $activeProducts }}</p></article>
+                <article class="glass-card p-6"><p class="text-sm text-slate-500">Stock bajo</p><p class="mt-3 text-4xl font-semibold text-slate-950">{{ $lowStockProducts }}</p></article>
+                <article class="glass-card p-6"><p class="text-sm text-slate-500">Pedidos pendientes</p><p class="mt-3 text-4xl font-semibold text-slate-950">{{ $pendingOrders }}</p></article>
+                <article class="glass-card p-6"><p class="text-sm text-slate-500">Pedidos entregados</p><p class="mt-3 text-4xl font-semibold text-slate-950">{{ $deliveredOrders }}</p></article>
+                <article class="glass-card p-6"><p class="text-sm text-slate-500">Pedidos de hoy</p><p class="mt-3 text-4xl font-semibold text-slate-950">{{ $todayOrders }}</p></article>
+            </section>
 
-            <div style="display: grid; gap: 12px; grid-template-columns: repeat(1, minmax(0, 1fr));" class="employee-stats-grid">
-                <div class="bg-white shadow-sm sm:rounded-lg p-6" style="border-left: 4px solid #2563eb;">
-                    <p style="font-size: 13px; color: #6b7280;">Productos totales</p>
-                    <p style="font-size: 28px; font-weight: 700;">{{ $totalProducts }}</p>
+            <section class="glass-card p-6 sm:p-8">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-raph-green">Pendientes</p>
+                        <h2 class="mt-2 text-2xl font-semibold tracking-tight text-slate-950">Solicitudes recientes</h2>
+                    </div>
+                    <a href="{{ route('inventory.products.create') }}" class="text-sm font-medium text-raph-green-dark transition hover:text-raph-green">Agregar producto</a>
                 </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6" style="border-left: 4px solid #0891b2;">
-                    <p style="font-size: 13px; color: #6b7280;">Productos activos</p>
-                    <p style="font-size: 28px; font-weight: 700;">{{ $activeProducts }}</p>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6" style="border-left: 4px solid #ca8a04;">
-                    <p style="font-size: 13px; color: #6b7280;">Existencia baja (&lt;10)</p>
-                    <p style="font-size: 28px; font-weight: 700;">{{ $lowStockProducts }}</p>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6" style="border-left: 4px solid #ea580c;">
-                    <p style="font-size: 13px; color: #6b7280;">Pedidos pendientes</p>
-                    <p style="font-size: 28px; font-weight: 700;">{{ $pendingOrders }}</p>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6" style="border-left: 4px solid #15803d;">
-                    <p style="font-size: 13px; color: #6b7280;">Pedidos entregados</p>
-                    <p style="font-size: 28px; font-weight: 700;">{{ $deliveredOrders }}</p>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6" style="border-left: 4px solid #0f766e;">
-                    <p style="font-size: 13px; color: #6b7280;">Pedidos de hoy</p>
-                    <p style="font-size: 28px; font-weight: 700;">{{ $todayOrders }}</p>
-                </div>
-            </div>
-
-            <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 10px;">Pendientes recientes</h3>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db;">
-                        <thead>
+                <div class="mt-6 overflow-hidden rounded-[28px] border border-white/80 bg-white/75">
+                    <table class="min-w-full text-left text-sm">
+                        <thead class="bg-white/90 text-xs uppercase tracking-[0.22em] text-slate-500">
                             <tr>
-                                <th style="padding: 10px; border: 1px solid #d1d5db; text-align: left;">Pedido</th>
-                                <th style="padding: 10px; border: 1px solid #d1d5db; text-align: left;">Cliente</th>
-                                <th style="padding: 10px; border: 1px solid #d1d5db; text-align: left;">Total</th>
-                                <th style="padding: 10px; border: 1px solid #d1d5db; text-align: left;">Fecha</th>
+                                <th class="px-5 py-4 font-medium">Pedido</th>
+                                <th class="px-5 py-4 font-medium">Cliente</th>
+                                <th class="px-5 py-4 font-medium">Total</th>
+                                <th class="px-5 py-4 font-medium">Fecha</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-200/70">
                             @forelse ($latestPendingOrders as $order)
-                                <tr>
-                                    <td style="padding: 10px; border: 1px solid #d1d5db;">#{{ $order->id }}</td>
-                                    <td style="padding: 10px; border: 1px solid #d1d5db;">{{ $order->user?->name ?? 'Usuario eliminado' }}</td>
-                                    <td style="padding: 10px; border: 1px solid #d1d5db;">${{ number_format((float) $order->total, 2) }}</td>
-                                    <td style="padding: 10px; border: 1px solid #d1d5db;">{{ $order->created_at?->format('d/m/Y H:i') }}</td>
+                                <tr class="bg-white/60 text-slate-700">
+                                    <td class="px-5 py-4 font-semibold text-slate-900">#{{ $order->id }}</td>
+                                    <td class="px-5 py-4">{{ $order->user?->name ?? 'Usuario eliminado' }}</td>
+                                    <td class="px-5 py-4">${{ number_format((float) $order->total, 2) }}</td>
+                                    <td class="px-5 py-4">{{ $order->created_at?->format('d/m/Y H:i') }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" style="padding: 12px; border: 1px solid #d1d5db; color: #4b5563;">No hay pedidos pendientes por ahora.</td>
+                                    <td colspan="4" class="px-5 py-8 text-center text-slate-500">No hay pedidos pendientes por ahora.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <style>
-                @media (min-width: 640px) {
-                    .employee-stats-grid {
-                        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                    }
-                }
-                @media (min-width: 1100px) {
-                    .employee-stats-grid {
-                        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-                    }
-                }
-            </style>
+            </section>
         </div>
     </div>
 </x-app-layout>
