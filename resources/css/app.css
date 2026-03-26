@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --raph-black: 11 15 12;
+        --raph-dark: 35 35 35;
+        --raph-green-dark: 93 136 77;
+        --raph-green: 116 172 66;
+        --raph-cream: 245 247 242;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top left, rgba(116, 172, 66, 0.16), transparent 34%),
+            radial-gradient(circle at top right, rgba(93, 136, 77, 0.12), transparent 30%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(241, 245, 239, 0.96));
+        color: rgb(15 23 42);
+        font-family: "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Arial Nova", "Segoe UI", sans-serif;
+    }
+
+    ::selection {
+        background: rgba(116, 172, 66, 0.25);
+    }
+}
+
+@layer components {
+    .page-section {
+        @apply px-4 py-8 sm:px-6 lg:px-8 lg:py-10;
+    }
+
+    .glass-card {
+        @apply rounded-[32px] border border-white/80 bg-white/70 shadow-[0_20px_60px_-28px_rgba(15,23,42,0.25)] backdrop-blur-xl;
+    }
+
+    .raph-button-primary {
+        @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-raph-black via-raph-dark to-raph-green-dark px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition duration-200 hover:-translate-y-0.5 hover:shadow-xl;
+    }
+
+    .raph-button-secondary {
+        @apply inline-flex items-center justify-center rounded-full border border-slate-200/80 bg-white/80 px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white;
+    }
+
+    .raph-pill {
+        @apply inline-flex items-center rounded-full border border-white/80 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-slate-500;
+    }
+
+    .raph-table {
+        @apply min-w-full overflow-hidden rounded-[28px];
+    }
+}

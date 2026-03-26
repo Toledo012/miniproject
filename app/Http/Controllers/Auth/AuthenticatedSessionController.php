@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
         $target = match ($user->role) {
             User::ROLE_GERENTE => route('manager.dashboard', absolute: false),
             User::ROLE_EMPLEADO => route('employee.dashboard', absolute: false),
-            default => route('client.products.index', absolute: false),
+            default => route('client.dashboard', absolute: false),
         };
 
         return redirect()->intended($target);
