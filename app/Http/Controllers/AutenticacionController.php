@@ -51,7 +51,7 @@ class AutenticacionController extends Controller
     public function destroy(): RedirectResponse
     {
         /** @var Usuario|null $usuario */
-        $usuario = auth()->user();
+        $usuario = Auth::user();
 
         if ($usuario) {
             Log::channel('autenticacion')->info('Logout', [

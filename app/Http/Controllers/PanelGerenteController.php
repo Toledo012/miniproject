@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Usuario;
 use App\Models\Venta;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class PanelGerenteController extends Controller
@@ -12,7 +13,7 @@ class PanelGerenteController extends Controller
     public function index(): View
     {
         /** @var Usuario $usuario */
-        $usuario = auth()->user();
+        $usuario = Auth::user();
 
         $ventas = Venta::query()
             ->where('vendedor_id', $usuario->id);

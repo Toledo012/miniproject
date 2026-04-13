@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use App\Models\Producto;
 use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -38,7 +39,7 @@ class ProductoController extends Controller
     public function store(StoreProductoRequest $request): RedirectResponse
     {
         /** @var Usuario $usuario */
-        $usuario = auth()->user();
+        $usuario = Auth::user();
 
         $producto = Producto::create([
             'nombre' => $request->validated('nombre'),
@@ -105,7 +106,7 @@ class ProductoController extends Controller
 
         Log::channel('productos')->info('Producto editado', [
             'producto_id' => $producto->id,
-            'usuario_id' => auth()->id(),
+            'usuario_id' => Auth::id(),
             'nombre' => $producto->nombre,
             'ip' => request()->ip(),
         ]);
@@ -133,7 +134,7 @@ class ProductoController extends Controller
 
         Log::channel('productos')->info('Producto eliminado', [
             'producto_id' => $productoId,
-            'usuario_id' => auth()->id(),
+            'usuario_id' => Auth::id(),
             'nombre' => $nombre,
             'ip' => request()->ip(),
         ]);

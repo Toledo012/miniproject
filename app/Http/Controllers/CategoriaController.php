@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCategoriaRequest;
 use App\Http\Requests\UpdateCategoriaRequest;
 use App\Models\Categoria;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
@@ -13,7 +14,10 @@ class CategoriaController extends Controller
 {
     public function index(): View
     {
-        abort_unless(Gate::allows('gestionar-catalogo') || auth()->user()?->esCliente(), 403);
+        /** @var \App\Models\Usuario|null $usuario */
+        $usuario = Auth::user();
+
+        abort_unless(Gate::allows('gestionar-catalogo') || $usuario?->esCliente(), 403);
 
         return view('categorias.index', [
             'categorias' => Categoria::query()->withCount('productos')->latest()->paginate(10),

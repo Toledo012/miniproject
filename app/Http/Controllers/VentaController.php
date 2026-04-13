@@ -8,6 +8,7 @@ use App\Models\Producto;
 use App\Models\Usuario;
 use App\Models\Venta;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -19,7 +20,7 @@ class VentaController extends Controller
         $this->authorize('viewAny', Venta::class);
 
         /** @var Usuario $usuario */
-        $usuario = auth()->user();
+        $usuario = Auth::user();
 
         $ventas = Venta::query()
             ->with(['producto', 'cliente', 'vendedor'])
@@ -49,7 +50,7 @@ class VentaController extends Controller
         $this->authorize('create', Venta::class);
 
         /** @var Usuario $usuario */
-        $usuario = auth()->user();
+        $usuario = Auth::user();
         $producto = Producto::query()->with('vendedor')->findOrFail($request->validated('producto_id'));
 
         if ($producto->existencia < 1) {

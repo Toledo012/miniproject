@@ -1,207 +1,306 @@
 # RAPH
 
-RAPH es un e-commerce desarrollado con Laravel 12 para la gestión de catálogo, compras y operación interna. El proyecto fue construido como parte de una entrega académica y organiza la experiencia del sistema según el tipo de cuenta que inicia sesión.
+RAPH es un mini sistema E-commerce desarrollado con Laravel 12 como base del **Mini Proyecto 2: Relaciones, Roles, Policies y Bitacoras en Laravel**. El proyecto fue reorganizado para cumplir con una estructura academica centrada en autenticacion manual, relaciones Eloquent reales, control de acceso por roles, autorizacion con Policies y Gates, validacion con FormRequest, poblamiento de datos con Seeders y Factories, y registro de eventos mediante canales de Log.
 
-## Descripción general
+## Alcance del proyecto
 
-La aplicación incluye:
+El sistema permite:
 
-- Página de inicio pública con información institucional.
-- Registro e inicio de sesión.
-- Redirección automática después del login según el tipo de cuenta.
-- Espacios de trabajo diferenciados para compra, operación e información administrativa.
-- CRUD de usuarios.
-- Gestión de contenido del inicio.
-- Gestión de inventario.
-- Carrito de compra y generación de pedidos.
-- Seguimiento y actualización del estado de pedidos.
+- administrar productos;
+- administrar categorias;
+- registrar ventas;
+- controlar accesos por rol;
+- registrar eventos importantes en bitacoras;
+- evidenciar relaciones entre modelos con Eloquent.
 
-## Objetivo del proyecto
+## Requerimientos cubiertos
 
-Construir una base funcional de tienda en línea que permita:
+La implementacion actual incluye:
 
-- mostrar una página principal accesible para cualquier visitante;
-- registrar usuarios y autenticar accesos;
-- dirigir cada cuenta al flujo que le corresponde;
-- evidenciar la administración de usuarios mediante un CRUD;
-- demostrar una base escalable para futuras entregas del e-commerce.
+- modelo `App\Models\Usuario` con autenticacion basada en `Authenticatable`;
+- roles `administrador`, `gerente` y `cliente`;
+- login manual con `Auth::attempt()` usando `correo` y `clave`;
+- entidades `Usuario`, `Producto`, `Categoria` y `Venta`;
+- relacion `Usuario 1:N Producto`;
+- relacion `Producto N:N Categoria` mediante `categoria_producto`;
+- relacion `Venta` con producto, cliente y vendedor;
+- Policies para usuarios, productos, categorias y ventas;
+- Gates para gestion de usuarios, catalogo y ventas;
+- FormRequest para validacion de operaciones principales;
+- Seeders y `UsuarioFactory`;
+- bitacoras en `autenticacion.log`, `productos.log` y `ventas.log`;
+- CRUD completo de productos, categorias y ventas;
+- gestion de usuarios conforme a reglas de acceso por rol.
 
-## Funcionalidades principales
+## Arquitectura funcional
 
-### Inicio público
+### Modelo Usuario
 
-- Vista principal accesible sin autenticación.
-- Secciones editables como:
-  - Quiénes somos
-  - Misión
-  - Visión
-  - Ubicación
-  - Contacto
-- Accesos a iniciar sesión y registrarse.
+El sistema ya no utiliza el modelo `User` por defecto de Laravel. La autenticacion se realiza con el modelo:
 
-### Autenticación
+- `App\Models\Usuario`
 
-- Formulario de inicio de sesión.
-- Formulario de registro.
-- Validación de credenciales y datos de registro.
-- Cierre de sesión.
-- Recuperación y restablecimiento de contraseña con Breeze.
+Campos principales:
 
-### Flujo después del inicio de sesión
+- `nombre`
+- `apellidos`
+- `correo`
+- `clave`
+- `rol`
 
-- Cuentas de compra:
-  - dashboard personal;
-  - catálogo;
-  - carrito;
-  - historial de pedidos.
-- Cuentas operativas:
-  - tablero con métricas;
-  - gestión de inventario;
-  - revisión de solicitudes de compra.
-- Cuentas administrativas:
-  - resumen general;
-  - gestión de usuarios;
-  - edición del contenido del inicio;
-  - acceso al inventario y pedidos.
+El provider de autenticacion se encuentra configurado en:
 
-### Gestión de usuarios
+- [`config/auth.php`](/C:/Laravel/miniproject/config/auth.php)
 
-El sistema incluye un CRUD de usuarios con:
+### Roles del sistema
+
+- `administrador`
+  - puede crear usuarios
+  - puede editar usuarios
+  - puede eliminar usuarios
+- `gerente`
+  - puede editar clientes
+  - no puede editar gerentes
+  - no puede editar administradores
+- `cliente`
+  - puede ver productos
+  - puede registrar compras mediante ventas
+
+### Entidades principales
+
+- `Usuario`
+- `Producto`
+- `Categoria`
+- `Venta`
+
+### Relaciones implementadas
+
+- `Usuario -> productos()`
+- `Producto -> vendedor()`
+- `Producto -> categorias()`
+- `Categoria -> productos()`
+- `Venta -> producto()`
+- `Venta -> cliente()`
+- `Venta -> vendedor()`
+- `Usuario -> ventasComoCliente()`
+- `Usuario -> ventasComoVendedor()`
+- `Usuario -> categoriasPivot()` como acceso intermedio a categorias mediante productos
+
+## Modulos principales
+
+### Inicio publico
+
+- pagina principal accesible sin autenticacion;
+- informacion general del proyecto y de la marca;
+- acceso a registro e inicio de sesion;
+- muestra una seleccion reciente de productos.
+
+### Autenticacion
+
+- registro manual de cuentas cliente;
+- inicio de sesion manual;
+- cierre de sesion;
+- redireccion al panel correspondiente segun el rol.
+
+### Paneles
+
+- panel de administrador con resumen de usuarios, productos, categorias y ventas;
+- panel de gerente con control comercial, productos y ventas recientes;
+- panel de cliente con historial de compras y productos sugeridos.
+
+### Catalogo
+
+- listado de productos;
+- creacion de productos;
+- edicion de productos;
+- eliminacion de productos cuando no tienen ventas;
+- asociacion de multiples categorias;
+- detalle de producto con vendedor y categorias.
+
+### Categorias
+
+- listado de categorias;
+- creacion de categorias;
+- edicion de categorias;
+- eliminacion de categorias;
+- detalle de categoria mostrando productos relacionados.
+
+### Ventas
+
+- listado de ventas;
+- registro de ventas;
+- edicion de ventas;
+- eliminacion de ventas;
+- detalle de venta con producto, cliente y vendedor.
+
+### Usuarios
 
 - listado por tipo de cuenta;
-- creación de nuevas cuentas;
-- edición de información y acceso;
-- eliminación con reglas de protección.
+- creacion de usuarios;
+- edicion de usuarios;
+- eliminacion de usuarios bajo reglas de proteccion.
 
-Reglas relevantes:
+## Autorizacion
 
-- no se puede eliminar la propia cuenta desde el panel de usuarios;
-- no se puede eliminar el último gerente;
-- no se elimina un usuario con historial de pedidos;
-- la contraseña solo se actualiza si se captura una nueva y su confirmación.
+La autorizacion del sistema esta basada en:
 
-### Catálogo e inventario
+- `Policies`
+- `Gates`
 
-- Alta de productos.
-- Edición de productos.
-- Eliminación o desactivación lógica cuando existe historial relacionado.
-- Imagen opcional por producto.
-- Búsqueda de productos para el flujo de compra.
+Archivos relevantes:
 
-### Carrito y pedidos
+- [`app/Policies/UsuarioPolicy.php`](/C:/Laravel/miniproject/app/Policies/UsuarioPolicy.php)
+- [`app/Policies/ProductoPolicy.php`](/C:/Laravel/miniproject/app/Policies/ProductoPolicy.php)
+- [`app/Policies/CategoriaPolicy.php`](/C:/Laravel/miniproject/app/Policies/CategoriaPolicy.php)
+- [`app/Policies/VentaPolicy.php`](/C:/Laravel/miniproject/app/Policies/VentaPolicy.php)
+- [`app/Providers/AppServiceProvider.php`](/C:/Laravel/miniproject/app/Providers/AppServiceProvider.php)
 
-- Agregar productos al carrito.
-- Actualizar cantidades.
-- Eliminar productos del carrito.
-- Generar pedido desde checkout.
-- Seguimiento de estado del pedido.
+## Validacion
 
-## Tecnologías utilizadas
+La validacion de formularios se implementa mediante FormRequest, evitando validaciones directas dentro de controladores.
 
-- PHP 8.2+
-- Laravel 12
-- Laravel Breeze
-- Blade
-- Tailwind CSS
-- Alpine.js
-- Vite
-- MySQL
+Ejemplos incluidos:
 
-## Estructura funcional del proyecto
+- [`app/Http/Requests/StoreProductoRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/StoreProductoRequest.php)
+- [`app/Http/Requests/UpdateProductoRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/UpdateProductoRequest.php)
+- [`app/Http/Requests/StoreCategoriaRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/StoreCategoriaRequest.php)
+- [`app/Http/Requests/UpdateCategoriaRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/UpdateCategoriaRequest.php)
+- [`app/Http/Requests/StoreVentaRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/StoreVentaRequest.php)
+- [`app/Http/Requests/UpdateVentaRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/UpdateVentaRequest.php)
+- [`app/Http/Requests/StoreUsuarioRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/StoreUsuarioRequest.php)
+- [`app/Http/Requests/UpdateUsuarioRequest.php`](/C:/Laravel/miniproject/app/Http/Requests/UpdateUsuarioRequest.php)
 
-### Controladores principales
+## Seeders y Factory
 
-- `InicioController`: página principal.
-- `AuthenticatedSessionController`: login y redirección posterior.
-- `RegisteredUserController`: registro de usuarios.
-- `PanelClienteController`: dashboard de compra.
-- `PanelEmpleadoController`: tablero operativo.
-- `PanelGerenteController`: tablero administrativo.
-- `GestionEmpleadosController`: CRUD de usuarios.
-- `ProductoController`: catálogo e inventario.
-- `CarritoController`: carrito y checkout.
-- `PedidoController`: historial de pedidos.
-- `SolicitudCompraController`: gestión de estados de pedidos.
-- `ContenidoSitioController`: edición del contenido del inicio.
+El proyecto incluye poblamiento inicial de datos para pruebas y evidencias.
 
-### Rutas importantes
+### Factory obligatoria
 
-- `/` inicio público.
-- `/login` inicio de sesión.
-- `/register` registro.
-- `/dashboard` redirección según cuenta.
-- `/cliente/*` flujo de compra.
-- `/empleado/*` operación interna.
-- `/gerente/*` administración.
-- `/inventario/products` inventario.
+- [`database/factories/UsuarioFactory.php`](/C:/Laravel/miniproject/database/factories/UsuarioFactory.php)
 
-## Requisitos previos
+La factory genera usuarios usando:
 
-Antes de ejecutar el proyecto, asegúrate de contar con:
+- nombres: `Juan`, `Mario`, `Maria`, `Pedro`
+- apellidos: `Lopez`, `Sanchez`, `Hernandez`, `Martinez`
+- correo institucional con formato `inicial + apellido`
+- clave fija `123` con hash
+- rol aleatorio entre `cliente` y `gerente`
+
+### Seeders principales
+
+- [`database/seeders/UsuarioSeeder.php`](/C:/Laravel/miniproject/database/seeders/UsuarioSeeder.php)
+- [`database/seeders/CategoriaSeeder.php`](/C:/Laravel/miniproject/database/seeders/CategoriaSeeder.php)
+- [`database/seeders/ProductoSeeder.php`](/C:/Laravel/miniproject/database/seeders/ProductoSeeder.php)
+- [`database/seeders/DatabaseSeeder.php`](/C:/Laravel/miniproject/database/seeders/DatabaseSeeder.php)
+
+## Bitacoras del sistema
+
+Se configuraron los siguientes canales:
+
+- `storage/logs/autenticacion.log`
+- `storage/logs/productos.log`
+- `storage/logs/ventas.log`
+
+Eventos registrados:
+
+- `autenticacion.log`
+  - login correcto
+  - login incorrecto
+  - logout
+- `productos.log`
+  - crear producto
+  - editar producto
+  - eliminar producto
+- `ventas.log`
+  - venta creada
+
+Configuracion principal:
+
+- [`config/logging.php`](/C:/Laravel/miniproject/config/logging.php)
+
+## Rutas principales
+
+Archivo principal:
+
+- [`routes/web.php`](/C:/Laravel/miniproject/routes/web.php)
+
+Rutas relevantes:
+
+- `/`
+- `/login`
+- `/register`
+- `/dashboard`
+- `/panel/administrador`
+- `/panel/gerente`
+- `/panel/cliente`
+- `/usuarios`
+- `/productos`
+- `/categorias`
+- `/ventas`
+
+## Instalacion
+
+### Requisitos
 
 - PHP 8.2 o superior
 - Composer
 - Node.js y npm
 - MySQL o MariaDB
 
-## Instalación
+### Pasos
 
-1. Clonar el repositorio:
+1. Clonar el repositorio.
 
 ```bash
 git clone <URL_DEL_REPOSITORIO>
 cd miniproject
 ```
 
-2. Instalar dependencias de backend:
+2. Instalar dependencias PHP.
 
 ```bash
 composer install
 ```
 
-3. Instalar dependencias de frontend:
+3. Instalar dependencias de frontend.
 
 ```bash
 npm install
 ```
 
-4. Crear el archivo de entorno:
+4. Crear el archivo `.env` a partir de `.env.example`.
 
-```bash
-cp .env.example .env
-```
+En Windows puedes copiarlo manualmente.
 
-En Windows puedes copiar manualmente `.env.example` como `.env`.
+5. Configurar la conexion a base de datos en `.env`.
 
-5. Configurar la conexión a base de datos en `.env`.
-
-6. Generar la llave de aplicación:
+6. Generar la llave de la aplicacion.
 
 ```bash
 php artisan key:generate
 ```
 
-7. Ejecutar migraciones y seeders:
+7. Ejecutar migraciones y seeders.
 
 ```bash
-php artisan migrate --seed
+php artisan migrate:fresh --seed
 ```
 
-8. Compilar assets:
+8. Compilar assets.
 
 ```bash
 npm run build
 ```
 
-9. Iniciar el servidor:
+9. Levantar el servidor.
 
 ```bash
 php artisan serve
 ```
 
-## Entorno de desarrollo
+## Desarrollo local
 
-Para trabajar en desarrollo con Vite:
+Para trabajar en modo desarrollo:
 
 ```bash
 npm run dev
@@ -213,77 +312,100 @@ Y en otra terminal:
 php artisan serve
 ```
 
-También puedes usar el script de Composer:
-
-```bash
-composer run dev
-```
-
 ## Credenciales de prueba
 
-Al ejecutar `php artisan migrate --seed`, se generan estas cuentas demo:
+Despues de ejecutar:
 
-- Gerencia
-  - correo: `gerente@tienda.local`
-  - contraseña: `password`
-- Compra
-  - correo: `cliente@tienda.local`
-  - contraseña: `password`
-- Operación
-  - correo: `empleado@tienda.local`
-  - contraseña: `password`
+```bash
+php artisan migrate:fresh --seed
+```
 
-## Validaciones relevantes
+el sistema deja disponibles estas cuentas base:
 
-- Registro:
-  - nombre obligatorio;
-  - correo obligatorio y único;
-  - contraseña obligatoria con confirmación.
-- Login:
-  - correo y contraseña obligatorios;
-  - control de intentos mediante rate limiting.
-- Usuarios:
-  - nombre, correo y tipo de cuenta obligatorios;
-  - datos de contacto opcionales;
-  - contraseña opcional en edición.
-- Checkout:
-  - la dirección debe existir en el perfil para poder generar el pedido.
+- Administrador
+  - correo: `admin@raph.local`
+  - clave: `123`
+- Gerente
+  - correo: `gerente@raph.local`
+  - clave: `123`
+- Cliente
+  - correo: `cliente@raph.local`
+  - clave: `123`
 
-## Base de datos
+Ademas, `UsuarioSeeder` y `UsuarioFactory` generan cuentas adicionales para pruebas.
 
-El proyecto incluye migraciones para:
+## Como crear mas usuarios
 
-- usuarios;
-- sesiones y recuperación de contraseña;
-- productos;
-- carrito;
-- pedidos;
-- detalle de pedidos;
-- contenido del sitio.
+### Desde el sistema
 
-## Estado actual del proyecto
+La forma principal es iniciar sesion con una cuenta administradora y acceder al modulo:
 
-Actualmente el sistema ya cubre los puntos esenciales de la entrega:
+- `/usuarios`
 
-- inicio público;
-- autenticación;
-- validación de login y registro;
-- redirección después del login;
-- paneles principales;
-- CRUD de usuarios;
-- listado de usuarios;
-- vistas Blade necesarias para el flujo principal;
-- operación base de un e-commerce académico funcional.
+Desde esa seccion se pueden crear nuevas cuentas indicando:
 
-## Posibles mejoras futuras
+- nombre
+- apellidos
+- correo
+- clave
+- rol
 
-- pasarela de pago real;
-- filtros avanzados de catálogo;
-- panel de reportes con estadísticas más profundas;
-- carga de imágenes optimizada;
-- pruebas automatizadas más amplias;
-- mejora continua de UX en vistas secundarias.
+### Desde seeders
+
+Tambien puedes generar usuarios adicionales ejecutando:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Esto recrea la base de datos y vuelve a cargar:
+
+- usuarios de prueba
+- categorias
+- productos
+- una venta inicial
+
+## Tecnologias utilizadas
+
+- PHP 8.2+
+- Laravel 12
+- Blade
+- Tailwind CSS
+- Alpine.js
+- Vite
+- MySQL
+
+## Archivos clave para revision academica
+
+- [`app/Models/Usuario.php`](/C:/Laravel/miniproject/app/Models/Usuario.php)
+- [`app/Models/Producto.php`](/C:/Laravel/miniproject/app/Models/Producto.php)
+- [`app/Models/Categoria.php`](/C:/Laravel/miniproject/app/Models/Categoria.php)
+- [`app/Models/Venta.php`](/C:/Laravel/miniproject/app/Models/Venta.php)
+- [`app/Http/Controllers/AutenticacionController.php`](/C:/Laravel/miniproject/app/Http/Controllers/AutenticacionController.php)
+- [`app/Http/Controllers/ProductoController.php`](/C:/Laravel/miniproject/app/Http/Controllers/ProductoController.php)
+- [`app/Http/Controllers/CategoriaController.php`](/C:/Laravel/miniproject/app/Http/Controllers/CategoriaController.php)
+- [`app/Http/Controllers/VentaController.php`](/C:/Laravel/miniproject/app/Http/Controllers/VentaController.php)
+- [`app/Http/Controllers/UsuarioController.php`](/C:/Laravel/miniproject/app/Http/Controllers/UsuarioController.php)
+- [`config/auth.php`](/C:/Laravel/miniproject/config/auth.php)
+- [`config/logging.php`](/C:/Laravel/miniproject/config/logging.php)
+- [`routes/web.php`](/C:/Laravel/miniproject/routes/web.php)
+- [`database/migrations`](/C:/Laravel/miniproject/database/migrations)
+- [`database/seeders`](/C:/Laravel/miniproject/database/seeders)
+- [`database/factories/UsuarioFactory.php`](/C:/Laravel/miniproject/database/factories/UsuarioFactory.php)
+
+## Estado actual
+
+El proyecto ya se encuentra alineado con los requerimientos del Mini Proyecto 2 en su parte funcional y tecnica:
+
+- autenticacion manual;
+- control de acceso por roles;
+- relaciones Eloquent requeridas;
+- CRUD de productos, categorias y ventas;
+- policies y gates;
+- FormRequest;
+- seeders y factory;
+- bitacoras por canal.
 
 ## Licencia
 
-Este proyecto fue desarrollado con fines académicos y de aprendizaje.
+Proyecto desarrollado con fines academicos.
