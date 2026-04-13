@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
+use App\Models\Usuario;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +16,10 @@ class EnsureUserRole
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        /** @var User|null $user */
+        /** @var Usuario|null $user */
         $user = $request->user();
 
-        if (! $user || ! in_array($user->role, $roles, true)) {
+        if (! $user || ! in_array($user->rol, $roles, true)) {
             abort(403);
         }
 

@@ -2,33 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\User;
+use App\Models\Producto;
+use App\Models\Usuario;
+use App\Models\Venta;
 use Illuminate\View\View;
 
 class PanelGerenteController extends Controller
 {
     public function index(): View
     {
-        $pendingOrders = Order::query()->where('status', Order::STATUS_PENDING)->count();
-        $deliveredOrders = Order::query()->where('status', Order::STATUS_DELIVERED)->count();
-        $todaySales = (float) Order::query()
-            ->whereDate('created_at', now()->toDateString())
+        /** @var Usuario $usuario */
+        $usuario = auth()->user();
+
+        $ventas = Venta::query()
+            ->where('vendedor_id', $usuario->id);
+
+        $ventasHoy = (float) (clone $ventas)
+            ->whereDate('fecha', now()->toDateString())
             ->sum('total');
 
-        return view('manager.dashboard', [
-            'totalUsers' => User::count(),
-            'totalEmployees' => User::where('role', User::ROLE_EMPLEADO)->count(),
-            'totalClients' => User::where('role', User::ROLE_CLIENTE)->count(),
-            'totalProducts' => Product::count(),
-            'lowStockProducts' => Product::query()->where('stock', '<', 10)->count(),
-            'pendingOrders' => $pendingOrders,
-            'deliveredOrders' => $deliveredOrders,
-            'todaySales' => $todaySales,
-            'latestProducts' => Product::query()->latest()->take(5)->get(),
-            'latestOrders' => Order::query()->with('user')->latest()->take(6)->get(),
+        return view('paneles.gerente', [
+            'totalProductos' => Producto::query()->where('usuario_id', $usuario->id)->count(),
+            'totalCategorias' => $usuario->categoriasPivot()
+                ->distinct('categoria_id')
+                ->count('categoria_id'),
+            'totalVentas' => (clone $ventas)->count(),
+            'ventasHoy' => $ventasHoy,
+            'productos' => Producto::query()->with('categorias')->where('usuario_id', $usuario->id)->latest()->take(5)->get(),
+            'ultimasVentas' => (clone $ventas)->with(['producto', 'cliente'])->latest()->take(5)->get(),
         ]);
     }
 }
-

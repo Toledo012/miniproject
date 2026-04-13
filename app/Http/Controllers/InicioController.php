@@ -2,32 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\SiteContent;
+use App\Models\Producto;
 use Illuminate\View\View;
 
 class InicioController extends Controller
 {
     public function index(): View
     {
-        $products = Product::query()
-            ->where('is_active', true)
+        $productos = Producto::query()
+            ->with(['vendedor', 'categorias'])
             ->latest()
-            ->take(15)
+            ->take(8)
             ->get();
 
-        $siteContent = SiteContent::query()->first();
-
         return view('home', [
-            'products' => $products,
+            'productos' => $productos,
             'siteContent' => [
-                'about_us' => $siteContent?->about_us ?: 'Somos una tienda digital enfocada en ventas en linea y atencion al cliente.',
-                'mission' => $siteContent?->mission ?: 'Ofrecer productos de calidad con un proceso de compra simple, seguro y rapido.',
-                'vision' => $siteContent?->vision ?: 'Ser una tienda en linea confiable y referente en servicio para nuestros clientes.',
-                'location' => $siteContent?->location ?: 'Av. Comercio 123, Ciudad de Mexico, Mexico.',
-                'contact' => $siteContent?->contact ?: 'Email: contacto@tienda.local | Telefono: +52 55 0000 0000',
+                'about_us' => 'RAPH es una tienda digital enfocada en ofrecer productos de calidad con una experiencia de compra clara y eficiente.',
+                'mission' => 'Facilitar la administracion de productos y ventas mientras brindamos una experiencia sencilla para el cliente.',
+                'vision' => 'Consolidar una tienda confiable, organizada y escalable para futuras etapas del proyecto.',
+                'location' => 'Tuxtla Gutierrez, Chiapas, Mexico.',
+                'contact' => 'Correo: contacto@raph.com | Telefono: +52 961 000 0000',
             ],
         ]);
     }
 }
-

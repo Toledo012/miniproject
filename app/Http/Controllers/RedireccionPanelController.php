@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
 
 class RedireccionPanelController extends Controller
 {
     public function __invoke(): RedirectResponse
     {
-        /** @var User $user */
+        /** @var Usuario $user */
         $user = auth()->user();
 
-        return match ($user->role) {
-            User::ROLE_GERENTE => redirect()->route('manager.dashboard'),
-            User::ROLE_EMPLEADO => redirect()->route('employee.dashboard'),
-            default => redirect()->route('client.dashboard'),
+        return match ($user->rol) {
+            Usuario::ROL_ADMINISTRADOR => redirect()->route('panel.administrador'),
+            Usuario::ROL_GERENTE => redirect()->route('panel.gerente'),
+            default => redirect()->route('panel.cliente'),
         };
     }
 }

@@ -2,42 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\Product;
+use App\Models\Producto;
+use App\Models\Usuario;
+use App\Models\Venta;
 use Illuminate\View\View;
 
 class PanelClienteController extends Controller
 {
     public function index(): View
     {
-        $user = auth()->user();
-        $cartItems = $user->cartItems()->with('product')->get();
-        $latestOrders = $user->orders()->with('items')->latest()->take(4)->get();
-        $featuredProducts = Product::query()
-            ->where('is_active', true)
-            ->latest()
-            ->take(4)
-            ->get();
+        /** @var Usuario $usuario */
+        $usuario = auth()->user();
 
-        $profileFields = [
-            $user->phone,
-            $user->address,
-            $user->city,
-            $user->state,
-            $user->postal_code,
-        ];
+        $ventas = $usuario->ventasComoCliente()->with(['producto', 'vendedor']);
 
-        $completedFields = collect($profileFields)->filter(fn (?string $value) => filled($value))->count();
-        $profileProgress = (int) round(($completedFields / count($profileFields)) * 100);
-
-        return view('client.dashboard', [
-            'cartCount' => $cartItems->sum('quantity'),
-            'cartTotal' => $cartItems->sum(fn ($item) => ((float) $item->product->price) * $item->quantity),
-            'pendingOrders' => $user->orders()->where('status', Order::STATUS_PENDING)->count(),
-            'deliveredOrders' => $user->orders()->where('status', Order::STATUS_DELIVERED)->count(),
-            'latestOrders' => $latestOrders,
-            'featuredProducts' => $featuredProducts,
-            'profileProgress' => $profileProgress,
+        return view('paneles.cliente', [
+            'comprasRealizadas' => (clone $ventas)->count(),
+            'gastoTotal' => (float) (clone $ventas)->sum('total'),
+            'productosDisponibles' => Producto::query()->where('existencia', '>', 0)->count(),
+            'ultimasCompras' => (clone $ventas)->latest()->take(5)->get(),
+            'productosDestacados' => Producto::query()
+                ->with('vendedor')
+                ->where('existencia', '>', 0)
+                ->latest()
+                ->take(4)
+                ->get(),
         ]);
     }
 }

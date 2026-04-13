@@ -65,6 +65,27 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'autenticacion' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/autenticacion.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
+        'productos' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/productos.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
+        'ventas' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/ventas.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

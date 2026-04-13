@@ -2,41 +2,67 @@
 
 namespace Database\Seeders;
 
-use App\Models\Product;
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Producto;
+use App\Models\Usuario;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        User::query()->updateOrCreate([
-            'email' => 'gerente@tienda.local',
-        ], [
-            'name' => 'Gerente Inicial',
-            'password' => Hash::make('password'),
-            'role' => User::ROLE_GERENTE,
+        $this->call([
+            UsuarioSeeder::class,
         ]);
 
-        User::factory()->cliente()->create([
-            'name' => 'Cliente Demo',
-            'email' => 'cliente@tienda.local',
+        Usuario::query()->updateOrCreate(
+            ['correo' => 'admin@raph.local'],
+            [
+                'nombre' => 'Admin',
+                'apellidos' => 'RAPH',
+                'clave' => Hash::make('123'),
+                'rol' => Usuario::ROL_ADMINISTRADOR,
+            ]
+        );
+
+        $gerenteDemo = Usuario::query()->updateOrCreate(
+            ['correo' => 'gerente@raph.local'],
+            [
+                'nombre' => 'Mario',
+                'apellidos' => 'Lopez',
+                'clave' => Hash::make('123'),
+                'rol' => Usuario::ROL_GERENTE,
+            ]
+        );
+
+        $clienteDemo = Usuario::query()->updateOrCreate(
+            ['correo' => 'cliente@raph.local'],
+            [
+                'nombre' => 'Maria',
+                'apellidos' => 'Martinez',
+                'clave' => Hash::make('123'),
+                'rol' => Usuario::ROL_CLIENTE,
+            ]
+        );
+
+        $this->call([
+            CategoriaSeeder::class,
+            ProductoSeeder::class,
         ]);
 
-        User::factory()->empleado()->create([
-            'name' => 'Empleado Demo',
-            'email' => 'empleado@tienda.local',
-        ]);
+        $productoVenta = Producto::query()->first();
 
-        Product::factory(8)->create([
-            'is_active' => true,
-        ]);
+        if ($productoVenta && ! $clienteDemo->ventasComoCliente()->exists()) {
+            $clienteDemo->ventasComoCliente()->create([
+                'producto_id' => $productoVenta->id,
+                'vendedor_id' => $productoVenta->usuario_id,
+                'fecha' => now()->toDateString(),
+                'total' => $productoVenta->precio,
+            ]);
+
+            if ($productoVenta->existencia > 0) {
+                $productoVenta->decrement('existencia');
+            }
+        }
     }
 }

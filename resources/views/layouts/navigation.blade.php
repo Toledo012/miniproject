@@ -9,47 +9,21 @@
                 <div class="hidden xl:flex">
                     <div class="rounded-full border border-white/80 bg-white/70 p-1 shadow-sm">
                         <div class="flex items-center gap-1">
-                            @if (! Auth::user()->isCliente())
-                                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                                    Panel
-                                </x-nav-link>
-                            @else
-                                <x-nav-link :href="route('client.dashboard')" :active="request()->routeIs('client.dashboard')">
-                                    Dashboard
-                                </x-nav-link>
-                            @endif
-
-                            <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                                Inicio
+                            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard') || request()->routeIs('panel.*')">
+                                Panel
                             </x-nav-link>
-
-                            @if (Auth::user()->isCliente())
-                                <x-nav-link :href="route('client.products.index')" :active="request()->routeIs('client.products.*')">
-                                    Catalogo
-                                </x-nav-link>
-                                <x-nav-link :href="route('client.cart')" :active="request()->routeIs('client.cart')">
-                                    Carrito
-                                </x-nav-link>
-                                <x-nav-link :href="route('client.orders.index')" :active="request()->routeIs('client.orders.*')">
-                                    Pedidos
-                                </x-nav-link>
-                            @endif
-
-                            @if (Auth::user()->isEmpleado() || Auth::user()->isGerente())
-                                <x-nav-link :href="route('inventory.products.index')" :active="request()->routeIs('inventory.products.*')">
-                                    Inventario
-                                </x-nav-link>
-                                <x-nav-link :href="route('employee.purchase-requests.index')" :active="request()->routeIs('employee.purchase-requests.*')">
-                                    Solicitudes
-                                </x-nav-link>
-                            @endif
-
-                            @if (Auth::user()->isGerente())
-                                <x-nav-link :href="route('manager.users.index')" :active="request()->routeIs('manager.users.*')">
+                            <x-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.*')">
+                                Productos
+                            </x-nav-link>
+                            <x-nav-link :href="route('categorias.index')" :active="request()->routeIs('categorias.*')">
+                                Categorias
+                            </x-nav-link>
+                            <x-nav-link :href="route('ventas.index')" :active="request()->routeIs('ventas.*')">
+                                Ventas
+                            </x-nav-link>
+                            @if (auth()->user()->esAdministrador() || auth()->user()->esGerente())
+                                <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">
                                     Usuarios
-                                </x-nav-link>
-                                <x-nav-link :href="route('manager.content.edit')" :active="request()->routeIs('manager.content.*')">
-                                    Contenido
                                 </x-nav-link>
                             @endif
                         </div>
@@ -58,36 +32,11 @@
             </div>
 
             <div class="hidden items-center gap-3 sm:flex">
-                <span class="raph-pill">Mi cuenta</span>
-                <x-dropdown align="right" width="64">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center gap-3 rounded-full border border-white/80 bg-white/80 px-3 py-2 shadow-sm transition hover:border-slate-200 hover:bg-white">
-                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-raph-green to-raph-green-dark text-sm font-semibold text-white">
-                                {{ strtoupper(mb_substr(Auth::user()->name, 0, 1)) }}
-                            </span>
-                            <span class="hidden text-left md:block">
-                                <span class="block text-sm font-semibold text-slate-900">{{ Auth::user()->name }}</span>
-                                <span class="block text-xs text-slate-500">{{ Auth::user()->email }}</span>
-                            </span>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <div class="px-2 py-2">
-                            <x-dropdown-link :href="route('profile.edit')">
-                                Perfil
-                            </x-dropdown-link>
-
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault(); this.closest('form').submit();">
-                                    Cerrar sesion
-                                </x-dropdown-link>
-                            </form>
-                        </div>
-                    </x-slot>
-                </x-dropdown>
+                <span class="raph-pill">{{ ucfirst(auth()->user()->rol) }}</span>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="raph-button-secondary">Cerrar sesion</button>
+                </form>
             </div>
 
             <button @click="open = ! open" class="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/80 bg-white/80 text-slate-700 shadow-sm transition hover:bg-white sm:hidden">
@@ -101,68 +50,34 @@
 
     <div :class="{'block': open, 'hidden': ! open}" class="hidden border-t border-white/70 bg-white/75 px-4 py-4 backdrop-blur-2xl sm:hidden">
         <div class="space-y-2">
-            @if (! Auth::user()->isCliente())
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    Panel
-                </x-responsive-nav-link>
-            @else
-                <x-responsive-nav-link :href="route('client.dashboard')" :active="request()->routeIs('client.dashboard')">
-                    Dashboard
-                </x-responsive-nav-link>
-            @endif
-
-            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                Inicio
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard') || request()->routeIs('panel.*')">
+                Panel
             </x-responsive-nav-link>
-
-            @if (Auth::user()->isCliente())
-                <x-responsive-nav-link :href="route('client.products.index')" :active="request()->routeIs('client.products.*')">
-                    Catalogo
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('client.cart')" :active="request()->routeIs('client.cart')">
-                    Carrito
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('client.orders.index')" :active="request()->routeIs('client.orders.*')">
-                    Pedidos
-                </x-responsive-nav-link>
-            @endif
-
-            @if (Auth::user()->isEmpleado() || Auth::user()->isGerente())
-                <x-responsive-nav-link :href="route('inventory.products.index')" :active="request()->routeIs('inventory.products.*')">
-                    Inventario
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('employee.purchase-requests.index')" :active="request()->routeIs('employee.purchase-requests.*')">
-                    Solicitudes
-                </x-responsive-nav-link>
-            @endif
-
-            @if (Auth::user()->isGerente())
-                <x-responsive-nav-link :href="route('manager.users.index')" :active="request()->routeIs('manager.users.*')">
+            <x-responsive-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.*')">
+                Productos
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('categorias.index')" :active="request()->routeIs('categorias.*')">
+                Categorias
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('ventas.index')" :active="request()->routeIs('ventas.*')">
+                Ventas
+            </x-responsive-nav-link>
+            @if (auth()->user()->esAdministrador() || auth()->user()->esGerente())
+                <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">
                     Usuarios
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('manager.content.edit')" :active="request()->routeIs('manager.content.*')">
-                    Contenido
                 </x-responsive-nav-link>
             @endif
         </div>
 
         <div class="mt-4 rounded-[28px] border border-white/80 bg-white/80 p-4 shadow-sm">
-            <div class="text-sm font-semibold text-slate-900">{{ Auth::user()->name }}</div>
-            <div class="mt-1 text-sm text-slate-500">{{ Auth::user()->email }}</div>
+            <div class="text-sm font-semibold text-slate-900">{{ auth()->user()->nombre }} {{ auth()->user()->apellidos }}</div>
+            <div class="mt-1 text-sm text-slate-500">{{ auth()->user()->correo }}</div>
+            <div class="mt-1 text-xs uppercase tracking-[0.2em] text-slate-400">{{ auth()->user()->rol }}</div>
 
-            <div class="mt-4 space-y-2">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    Perfil
-                </x-responsive-nav-link>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault(); this.closest('form').submit();">
-                        Cerrar sesion
-                    </x-responsive-nav-link>
-                </form>
-            </div>
+            <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                @csrf
+                <button type="submit" class="raph-button-secondary w-full">Cerrar sesion</button>
+            </form>
         </div>
     </div>
 </nav>
