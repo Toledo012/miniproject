@@ -1,0 +1,88 @@
+# =============================================================================
+# .dockerignore — excluye del contexto de build todo lo que no debe ir al
+# contenedor de producción (dependencias generadas, secretos, artefactos
+# de desarrollo, configuración de IDE, metadata de git/CI, etc.).
+# =============================================================================
+
+# --- Dependencias generadas ---
+/vendor
+/node_modules
+
+# --- Build / assets generados localmente ---
+/public/build
+/public/hot
+/public/storage
+
+# --- Entorno y secretos ---
+.env
+.env.*
+!.env.example
+
+# --- Storage de runtime (se monta como volumen en producción) ---
+/storage/*.key
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/testing/*
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/app/private/*
+!/storage/app/private/.gitignore
+
+# --- Git / metadata del repo ---
+.git
+.gitignore
+.gitattributes
+.gitkeep
+.github
+
+# --- Integración continua / despliegue local ---
+docker-compose*.yml
+Dockerfile.dev
+
+# --- Configuración de editores e IDEs ---
+.vscode
+.idea
+.fleet
+.nova
+.zed
+.editorconfig
+.phpactor.json
+
+# --- Sistemas operativos ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Testing y artefactos de cobertura ---
+/tests
+phpunit.xml
+.phpunit.cache
+.phpunit.result.cache
+coverage/
+clover.xml
+
+# --- Caches y logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Documentación que no aporta al runtime ---
+README.md
+*.md
+
+# --- Agentes y herramientas locales ---
+.claude
+.cursor
+
+# --- Composer y npm: artefactos auxiliares ---
+auth.json
+package-lock.json
+.npmrc
+
+# --- Este propio Dockerfile / dockerignore ---
+Dockerfile
+.dockerignore
