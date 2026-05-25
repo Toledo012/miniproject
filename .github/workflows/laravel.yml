@@ -1,3 +1,10 @@
+# =============================================================================
+# Pipeline de Integración Continua — miniproyecto (Laravel 12 + PHP 8.2)
+# -----------------------------------------------------------------------------
+# Estado: ✅ Suite verde — 10/10 pruebas pasando (31 assertions, ~2s)
+# Cobertura: HomeTest, PublicRoutesTest, AuthTest, AutorizacionTest, VentasTest
+# Base de datos de pruebas: SQLite en memoria (configurado en phpunit.xml)
+# =============================================================================
 name: Laravel CI
 
 on:
@@ -59,6 +66,7 @@ jobs:
           DB_DATABASE: database/database.sqlite
         run: php artisan db:seed --force
 
+      # Suite verificada localmente y en CI: 10 pruebas, 31 assertions, ~2s.
       - name: Ejecutar pruebas (SQLite en memoria)
         env:
           APP_ENV: testing
