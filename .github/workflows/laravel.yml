@@ -1,0 +1,67 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  laravel-tests:
+    name: Pruebas Laravel (PHP 8.2 + SQLite)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, sqlite, pdo_sqlite, gd, curl, xml, bcmath, intl, fileinfo
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache de dependencias Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Instalar dependencias con Composer
+        run: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader --no-scripts
+
+      - name: Copiar .env.example a .env.testing
+        run: cp .env.example .env.testing
+
+      - name: Generar APP_KEY para el entorno de pruebas
+        run: php artisan key:generate --env=testing
+
+      - name: Configurar SQLite (archivo para migraciones y seeders)
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
+      - name: Ejecutar migraciones
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan migrate --force
+
+      - name: Ejecutar seeders
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: php artisan db:seed --force
+
+      - name: Ejecutar pruebas (SQLite en memoria)
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
+        run: php artisan test
